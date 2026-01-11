@@ -275,7 +275,7 @@ export default function EditLaporanPage() {
                           className="h-64 w-full object-cover"
                         />
                         <div className="absolute bottom-2 right-2">
-                          <Button
+                          {/*<Button
                             type="button"
                             size="sm"
                             variant="secondary"
@@ -285,7 +285,7 @@ export default function EditLaporanPage() {
                           >
                             <Camera className="mr-2 h-4 w-4" />
                             Ganti Foto
-                          </Button>
+                          </Button>*/}
                         </div>
                       </div>
                     )}

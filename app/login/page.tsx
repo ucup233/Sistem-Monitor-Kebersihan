@@ -133,12 +133,12 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <div className="rounded-lg border border-border bg-muted/50 p-4 text-sm">
+            {/*<div className="rounded-lg border border-border bg-muted/50 p-4 text-sm">
               <p className="mb-2 font-semibold text-card-foreground">Demo Account:</p>
               <p className="text-muted-foreground">
                 <span className="font-medium">Admin:</span> admin@kebersihan.com / admin123
               </p>
-            </div>
+            </div>*/}
           </div>
         </CardContent>
       </Card>
