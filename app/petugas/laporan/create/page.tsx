@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Upload, MapPin, Loader2, Camera } from "lucide-react"
+import { ArrowLeft, MapPin, Loader2, Camera } from "lucide-react"
 import Link from "next/link"
 import { laporanAPI } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { CameraCapture } from "@/components/camera-capture"
 
 export default function CreateLaporanPage() {
   const router = useRouter()
@@ -27,36 +28,13 @@ export default function CreateLaporanPage() {
   const [longitude, setLongitude] = useState("")
   const [keterangan, setKeterangan] = useState("")
 
-  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // Check file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "Error",
-          description: "Ukuran foto maksimal 5MB",
-          variant: "destructive",
-        })
-        return
-      }
-
-      // Check file type
-      if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
-        toast({
-          title: "Error",
-          description: "Format foto harus JPG, JPEG, atau PNG",
-          variant: "destructive",
-        })
-        return
-      }
-
-      setFoto(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setFotoPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
+  const handleCameraCapture = (file: File, preview: string) => {
+    setFoto(file)
+    setFotoPreview(preview)
+    toast({
+      title: "Berhasil",
+      description: "Foto berhasil diambil",
+    })
   }
 
   const getCurrentLocation = () => {
@@ -102,7 +80,7 @@ export default function CreateLaporanPage() {
     if (!foto) {
       toast({
         title: "Error",
-        description: "Foto harus diupload",
+        description: "Foto harus diambil",
         variant: "destructive",
       })
       return
@@ -193,30 +171,19 @@ export default function CreateLaporanPage() {
             <CardHeader>
               <CardTitle className="text-2xl">Buat Laporan Baru</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Upload foto kondisi kebersihan dan lengkapi informasi lokasi
+                Ambil foto kondisi kebersihan dan lengkapi informasi lokasi
               </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Photo Upload */}
+                {/* Photo Capture */}
                 <div className="space-y-2">
-                  <Label htmlFor="foto">
+                  <Label>
                     Foto Laporan <span className="text-destructive">*</span>
                   </Label>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <Input
-                        id="foto"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png"
-                        onChange={handleFotoChange}
-                        className="cursor-pointer"
-                      />
-                      <Button type="button" variant="outline" onClick={() => document.getElementById("foto")?.click()}>
-                        <Camera className="mr-2 h-4 w-4" />
-                        Pilih Foto
-                      </Button>
-                    </div>
+                    <CameraCapture onCapture={handleCameraCapture} />
+
                     {fotoPreview && (
                       <div className="relative overflow-hidden rounded-lg border border-border">
                         <img
@@ -224,9 +191,23 @@ export default function CreateLaporanPage() {
                           alt="Preview"
                           className="h-64 w-full object-cover"
                         />
+                        <div className="absolute bottom-2 right-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => {
+                              setFoto(null)
+                              setFotoPreview(null)
+                            }}
+                          >
+                            <Camera className="mr-2 h-4 w-4" />
+                            Ambil Ulang
+                          </Button>
+                        </div>
                       </div>
                     )}
-                    <p className="text-xs text-muted-foreground">Format: JPG, JPEG, PNG. Maksimal 5MB</p>
+                    <p className="text-xs text-muted-foreground">Klik tombol untuk mengakses kamera dan ambil foto</p>
                   </div>
                 </div>
 
@@ -317,7 +298,7 @@ export default function CreateLaporanPage() {
                       </>
                     ) : (
                       <>
-                        <Upload className="mr-2 h-4 w-4" />
+                        <Camera className="mr-2 h-4 w-4" />
                         Buat Laporan
                       </>
                     )}

@@ -15,6 +15,7 @@ import { ArrowLeft, Save, MapPin, Loader2, Camera } from "lucide-react"
 import Link from "next/link"
 import { laporanAPI, type Laporan } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { CameraCapture } from "@/components/camera-capture"
 
 export default function EditLaporanPage() {
   const params = useParams()
@@ -74,6 +75,15 @@ export default function EditLaporanPage() {
 
     fetchLaporan()
   }, [params.id])
+
+  const handleCameraCapture = (file: File, preview: string) => {
+    setFoto(file)
+    setFotoPreview(preview)
+    toast({
+      title: "Berhasil",
+      description: "Foto berhasil diambil",
+    })
+  }
 
   const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -251,23 +261,12 @@ export default function EditLaporanPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Photo Upload */}
+                {/* Photo Capture */}
                 <div className="space-y-2">
-                  <Label htmlFor="foto">Foto Laporan (Opsional - biarkan kosong jika tidak ingin mengganti)</Label>
+                  <Label>Foto Laporan (Opsional - biarkan kosong jika tidak ingin mengganti)</Label>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <Input
-                        id="foto"
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png"
-                        onChange={handleFotoChange}
-                        className="cursor-pointer"
-                      />
-                      <Button type="button" variant="outline" onClick={() => document.getElementById("foto")?.click()}>
-                        <Camera className="mr-2 h-4 w-4" />
-                        Ganti Foto
-                      </Button>
-                    </div>
+                    <CameraCapture onCapture={handleCameraCapture} />
+
                     {fotoPreview && (
                       <div className="relative overflow-hidden rounded-lg border border-border">
                         <img
@@ -275,9 +274,22 @@ export default function EditLaporanPage() {
                           alt="Preview"
                           className="h-64 w-full object-cover"
                         />
+                        <div className="absolute bottom-2 right-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => {
+                              setFoto(null)
+                            }}
+                          >
+                            <Camera className="mr-2 h-4 w-4" />
+                            Ganti Foto
+                          </Button>
+                        </div>
                       </div>
                     )}
-                    <p className="text-xs text-muted-foreground">Format: JPG, JPEG, PNG. Maksimal 5MB</p>
+                    <p className="text-xs text-muted-foreground">Klik tombol untuk mengambil foto baru dengan kamera</p>
                   </div>
                 </div>
 
